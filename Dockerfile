@@ -80,9 +80,11 @@ RUN apt-key adv --keyserver keyserver.ubuntu.com --recv-keys 10779AB4 \
 RUN apt-get install python-pip python-six python-pyasn1 python-requests python-pbr python-redis python-pika python-awsauth \
      && pip install awscli \
      && pip install python-jenkins \
-     && pip install 'elasticsearch>=5.0.0,<6.0.0'
+     && pip install 'elasticsearch>=5.0.0,<6.0.0' \
      && apt-get remove python-pip \
      && apt-get autoremove \
+     && apt-get clean \
+     && rm -rf /var/lib/apt/lists/* \
      && wget -o /usr/lib/nagios/plugins/check_cloudwatch_metrics https://raw.githubusercontent.com/rizvir/check_cloudwatch_metrics/master/check_cloudwatch_metrics \
      && chmod 755 check_cloudwatch_metrics
 
