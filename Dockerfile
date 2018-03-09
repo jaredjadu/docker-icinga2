@@ -1,5 +1,5 @@
 # Dockerfile for icinga2 with icingaweb2
-# https://github.com/korekontrol/debian-icinga2
+# https://github.com/korekontrol/docker-icinga2
 
 FROM debian:stretch
 
@@ -25,6 +25,7 @@ RUN apt-get update \
           apt-transport-https \
           ca-certificates \
           curl \
+          dirmngr \
           dnsutils \
           gnupg \
           lsb-release \
@@ -48,7 +49,6 @@ RUN apt-get update \
 RUN curl -s https://packages.icinga.com/icinga.key \
      | apt-key add - \
      && echo "deb http://packages.icinga.org/debian icinga-$(lsb_release -cs) main" > /etc/apt/sources.list.d/icinga2.list \
-     && export DEBIAN_FRONTEND=noninteractive \
      && apt-get update \
      && apt-get install -y --no-install-recommends \
           icinga2 \
