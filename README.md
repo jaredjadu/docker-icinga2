@@ -2,11 +2,11 @@
 
 This repository contains the source for the [icinga2](https://www.icinga.org/icinga2/) [docker](https://www.docker.com) image.
 
-The dockerhub-repository is located at [https://hub.docker.com/r/jordan/icinga2/](https://hub.docker.com/r/jordan/icinga2/).
+The dockerhub-repository is located at [https://hub.docker.com/r/korekontrol/icinga2/](https://hub.docker.com/r/korekontrol/icinga2/).
 
 This build is automated by push for the git-repo. Just crawl it via:
 
-    docker pull jordan/icinga2
+    docker pull korekontrol/icinga2
 
 ## Image details
 
@@ -30,7 +30,7 @@ This build is automated by push for the git-repo. Just crawl it via:
 
 Start a new container and bind to host's port 80
 
-    docker run -p 80:80 -t jordan/icinga2:latest
+    docker run -p 80:80 -t korekontrol/icinga2:latest
 
 ## Icinga Web 2
 
@@ -196,3 +196,11 @@ All these folders are configured and able to get mounted as volume. The bottom o
 | /var/log/supervisor | rw | logfolder for supervisord (not neccessary) |
 | /var/spool/icinga2 | rw | spool-folder for icinga2 (not neccessary) |
 | /var/cache/icinga2 | rw | cache-folder for icinga2 (not neccessary) |
+
+## Credits
+Created by [Marek Obuchowicz](https://github.com/marek-obuchowicz) from [KoreKontrol](https://www.korekontrol.eu/).
+
+Many thanks to the author of original repo, [Jordan Jethwa](https://github.com/jjethwa)
+
+## License
+[GPL](LICENSE)
