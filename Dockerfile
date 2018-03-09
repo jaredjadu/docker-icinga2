@@ -95,6 +95,8 @@ ARG GITREF_DIRECTOR=master
 ARG GITREF_MODGRAPHITE=master
 ARG GITREF_MODAWS=master
 ARG GITREF_MODELASTICSEARCH=master
+ARG GITREF_MODBUSINESSPROCESS=master
+ARG GITREF_MODCUBE=master
 
 RUN mkdir -p /usr/local/share/icingaweb2/modules/ \
     && wget -q --no-cookies -O - "https://github.com/Icinga/icingaweb2/archive/${GITREF_ICINGAWEB2}.tar.gz" \
@@ -111,6 +113,14 @@ RUN mkdir -p /usr/local/share/icingaweb2/modules/ \
     && mkdir -p /usr/local/share/icingaweb2/modules/elasticsearch \
     && wget -q --no-cookies -O - "https://github.com/Icinga/icingaweb2-module-elasticsearch/archive/${GITREF_MODELASTICSEARCH}.tar.gz" \
     | tar xz --strip-components=1 --directory=/usr/local/share/icingaweb2/modules/elasticsearch -f - icingaweb2-module-elasticsearch-${GITREF_MODGRAPHITE}/ \
+# Icingaweb2 Business Process
+    && mkdir -p /usr/local/share/icingaweb2/modules/businessprocess \
+    && wget -q --no-cookies -O - "https://github.com/Icinga/icingaweb2-module-businessprocess/archive/${GITREF_MODBUSINESSPROCESS}.tar.gz" \
+    | tar xz --strip-components=1 --directory=/usr/local/share/icingaweb2/modules/businessprocess -f - icingaweb2-module-businessprocess-${GITREF_MODBUSINESSPROCESS}/ \
+# Icingaweb2 Cube
+    && mkdir -p /usr/local/share/icingaweb2/modules/cube \
+    && wget -q --no-cookies -O - "https://github.com/Icinga/icingaweb2-module-cube/archive/${GITREF_MODCUBE}.tar.gz" \
+    | tar xz --strip-components=1 --directory=/usr/local/share/icingaweb2/modules/cube -f - icingaweb2-module-cube-${GITREF_MODCUBE}/ \
 # Icingaweb2 AWS
     && mkdir -p /usr/local/share/icingaweb2/modules/aws \
     && wget -q --no-cookies -O - "https://github.com/Icinga/icingaweb2-module-aws/archive/${GITREF_MODAWS}.tar.gz" \
