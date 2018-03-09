@@ -82,7 +82,7 @@ RUN apt-get -qy update \
      && pip install awscli \
      && pip install python-jenkins \
      && pip install 'elasticsearch>=5.0.0,<6.0.0' \
-     && apt-get remove python-pip \
+     && apt-get -qy remove python-pip \
      && apt-get autoremove \
      && apt-get clean \
      && rm -rf /var/lib/apt/lists/* \
