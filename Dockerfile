@@ -13,10 +13,12 @@ ENV APACHE2_HTTP=REDIRECT \
     ICINGA2_USER_FULLNAME="Icinga2" \
     ICINGA2_FEATURE_DIRECTOR="true" \
     ICINGA2_FEATURE_DIRECTOR_KICKSTART="true" \
-    ICINGA2_FEATURE_DIRECTOR_USER="icinga2-director"
+    ICINGA2_FEATURE_DIRECTOR_USER="icinga2-director" \
+    DEBIAN_FRONTEND="noninteractive"
 
-RUN export DEBIAN_FRONTEND=noninteractive \
-     && apt-get update \
+
+
+RUN apt-get update \
      && apt-get upgrade -y \
      && apt-get install -y --no-install-recommends \
           apache2 \
@@ -43,8 +45,7 @@ RUN export DEBIAN_FRONTEND=noninteractive \
      && apt-get clean \
      && rm -rf /var/lib/apt/lists/*
 
-RUN export DEBIAN_FRONTEND=noninteractive \
-     && curl -s https://packages.icinga.com/icinga.key \
+RUN curl -s https://packages.icinga.com/icinga.key \
      | apt-key add - \
      && echo "deb http://packages.icinga.org/debian icinga-$(lsb_release -cs) main" > /etc/apt/sources.list.d/icinga2.list \
      && export DEBIAN_FRONTEND=noninteractive \
@@ -63,20 +64,23 @@ RUN export DEBIAN_FRONTEND=noninteractive \
 
 # Install opsgenie notification handler
 RUN wget -o /tmp/opsgenie.deb https://s3-us-west-2.amazonaws.com/opsgeniedownloads/repo/opsgenie-icinga2_2.15.0_all.deb \
-     && dpkg -i /tmp/opsgenie.deb
+     && dpkg -i /tmp/opsgenie.deb \
+     && rm -f /tmp/opsgenie.deb
 
 # Install slack notification handler
 RUN apt-key adv --keyserver keyserver.ubuntu.com --recv-keys 10779AB4 \
-     && echo "deb https://raw.githubusercontent.com/nisabek/icinga2-slack-notifications/master/reprepro general main" " > /etc/apt/sources.list.d/icinga2-slack.list \
-     && export DEBIAN_FRONTEND=noninteractive \
+     && echo "deb https://raw.githubusercontent.com/nisabek/icinga2-slack-notifications/master/reprepro general main" > /etc/apt/sources.list.d/icinga2-slack.list \
      && apt-get update \
-     && apt-get install icinga2-slack-notifications
+     && apt-get install icinga2-slack-notifications \
+     && apt-get clean \
+     && rm -rf /var/lib/apt/lists/*
+
 
 # Install AWS SDK and additonal checks
-RUN export DEBIAN_FRONTEND=noninteractive \
-     && apt-get install python-pip python-six python-pyasn1 python-requests python-pbr \
+RUN apt-get install python-pip python-six python-pyasn1 python-requests python-pbr python-redis python-pika python-awsauth \
      && pip install awscli \
      && pip install python-jenkins \
+     && pip install 'elasticsearch>=5.0.0,<6.0.0'
      && apt-get remove python-pip \
      && apt-get autoremove \
      && wget -o /usr/lib/nagios/plugins/check_cloudwatch_metrics https://raw.githubusercontent.com/rizvir/check_cloudwatch_metrics/master/check_cloudwatch_metrics \
