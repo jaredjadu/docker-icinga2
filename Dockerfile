@@ -18,9 +18,9 @@ ENV APACHE2_HTTP=REDIRECT \
 
 
 
-RUN apt-get update \
-     && apt-get upgrade -y \
-     && apt-get install -y --no-install-recommends \
+RUN apt-get -qy update \
+     && apt-get upgrade -qy \
+     && apt-get install -qy --no-install-recommends \
           apache2 \
           apt-transport-https \
           ca-certificates \
@@ -70,14 +70,15 @@ RUN wget -O /tmp/opsgenie.deb https://s3-us-west-2.amazonaws.com/opsgeniedownloa
 # Install slack notification handler
 RUN apt-key adv --keyserver keyserver.ubuntu.com --recv-keys 10779AB4 \
      && echo "deb https://raw.githubusercontent.com/nisabek/icinga2-slack-notifications/master/reprepro general main" > /etc/apt/sources.list.d/icinga2-slack.list \
-     && apt-get update \
-     && apt-get install icinga2-slack-notifications \
+     && apt-get -qy update \
+     && apt-get -qy install icinga2-slack-notifications \
      && apt-get clean \
      && rm -rf /var/lib/apt/lists/*
 
 
 # Install AWS SDK and additonal checks
-RUN apt-get install python-pip python-six python-pyasn1 python-requests python-pbr python-redis python-pika python-awsauth \
+RUN apt-get -qy update \
+     && apt-get -qy install python-pip python-six python-pyasn1 python-requests python-pbr python-redis python-pika python-awsauth \
      && pip install awscli \
      && pip install python-jenkins \
      && pip install 'elasticsearch>=5.0.0,<6.0.0' \
@@ -86,7 +87,7 @@ RUN apt-get install python-pip python-six python-pyasn1 python-requests python-p
      && apt-get clean \
      && rm -rf /var/lib/apt/lists/* \
      && wget -O /usr/lib/nagios/plugins/check_cloudwatch_metrics https://raw.githubusercontent.com/rizvir/check_cloudwatch_metrics/master/check_cloudwatch_metrics \
-     && chmod 755 /usr/lib/nagios/plugins/check_cloudwatch_metrics
+     && chmod 755 /usr/lib/nagios/plugins/check_cloudwatch_metrics 
 
 # Temporary hack to get icingaweb2 modules via git
 ARG GITREF_ICINGAWEB2=master
