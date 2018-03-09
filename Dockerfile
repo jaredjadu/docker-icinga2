@@ -1,9 +1,9 @@
 # Dockerfile for icinga2 with icingaweb2
-# https://github.com/jjethwa/icinga2
+# https://github.com/korekontrol/debian-icinga2
 
 FROM debian:stretch
 
-MAINTAINER Jordan Jethwa
+MAINTAINER Marek Obuchowicz
 
 ENV APACHE2_HTTP=REDIRECT \
     ICINGA2_FEATURE_GRAPHITE=false \
@@ -20,6 +20,7 @@ RUN export DEBIAN_FRONTEND=noninteractive \
      && apt-get upgrade -y \
      && apt-get install -y --no-install-recommends \
           apache2 \
+          apt-transport-https \
           ca-certificates \
           curl \
           dnsutils \
@@ -60,12 +61,33 @@ RUN export DEBIAN_FRONTEND=noninteractive \
      && apt-get clean \
      && rm -rf /var/lib/apt/lists/*
 
+# Install opsgenie notification handler
+RUN wget -o /tmp/opsgenie.deb https://s3-us-west-2.amazonaws.com/opsgeniedownloads/repo/opsgenie-icinga2_2.15.0_all.deb \
+     && dpkg -i /tmp/opsgenie.deb
+
+# Install slack notification handler
+RUN apt-key adv --keyserver keyserver.ubuntu.com --recv-keys 10779AB4 \
+     && echo "deb https://raw.githubusercontent.com/nisabek/icinga2-slack-notifications/master/reprepro general main" " > /etc/apt/sources.list.d/icinga2-slack.list \
+     && export DEBIAN_FRONTEND=noninteractive \
+     && apt-get update \
+     && apt-get install icinga2-slack-notifications
+
+# Install AWS SDK and additonal checks
+RUN export DEBIAN_FRONTEND=noninteractive \
+     && apt-get install python-pip python-six python-pyasn1 python-requests python-pbr \
+     && pip install awscli \
+     && pip install python-jenkins \
+     && apt-get remove python-pip \
+     && apt-get autoremove \
+     && wget -o /usr/lib/nagios/plugins/check_cloudwatch_metrics https://raw.githubusercontent.com/rizvir/check_cloudwatch_metrics/master/check_cloudwatch_metrics \
+     && chmod 755 check_cloudwatch_metrics
+
+# Temporary hack to get icingaweb2 modules via git
 ARG GITREF_ICINGAWEB2=master
 ARG GITREF_DIRECTOR=master
 ARG GITREF_MODGRAPHITE=master
 ARG GITREF_MODAWS=master
 
-# Temporary hack to get icingaweb2 modules via git
 RUN mkdir -p /usr/local/share/icingaweb2/modules/ \
     && wget -q --no-cookies -O - "https://github.com/Icinga/icingaweb2/archive/${GITREF_ICINGAWEB2}.tar.gz" \
     | tar xz --strip-components=2 --directory=/usr/local/share/icingaweb2/modules -f - icingaweb2-${GITREF_ICINGAWEB2}/modules/monitoring icingaweb2-${GITREF_ICINGAWEB2}/modules/doc \
