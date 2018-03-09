@@ -83,7 +83,7 @@ RUN apt-get -qy update \
      && pip install python-jenkins \
      && pip install 'elasticsearch>=5.0.0,<6.0.0' \
      && apt-get -qy remove python-pip \
-     && apt-get autoremove \
+     && apt-get -qy autoremove \
      && apt-get clean \
      && rm -rf /var/lib/apt/lists/* \
      && wget -O /usr/lib/nagios/plugins/check_cloudwatch_metrics https://raw.githubusercontent.com/rizvir/check_cloudwatch_metrics/master/check_cloudwatch_metrics \
