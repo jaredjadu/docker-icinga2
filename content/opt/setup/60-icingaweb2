@@ -72,6 +72,7 @@ ini_set /etc/icingaweb2/resources.ini icinga_ido port     "${ICINGA2_IDO_MYSQL_P
 ini_set /etc/icingaweb2/resources.ini icinga_ido username "${ICINGA2_IDO_MYSQL_USER}"
 ini_set /etc/icingaweb2/resources.ini icinga_ido password "${ICINGA2_IDO_MYSQL_PASS}"
 ini_set /etc/icingaweb2/resources.ini icinga_ido dbname   "${ICINGA2_IDO_MYSQL_DATA}"
+ini_set /etc/icingaweb2/resources.ini icinga_ido charset  "latin1"
 
 # Write Icingaweb2 user and password to installation
 ini_set /etc/icingaweb2/roles.ini Administrators users "${ICINGAWEB2_ADMIN_USER}"
