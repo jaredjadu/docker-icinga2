@@ -63,7 +63,7 @@ RUN curl -s https://packages.icinga.com/icinga.key \
      && rm -rf /var/lib/apt/lists/*
 
 # Install opsgenie notification handler
-RUN wget -o /tmp/opsgenie.deb https://s3-us-west-2.amazonaws.com/opsgeniedownloads/repo/opsgenie-icinga2_2.15.0_all.deb \
+RUN wget -O /tmp/opsgenie.deb https://s3-us-west-2.amazonaws.com/opsgeniedownloads/repo/opsgenie-icinga2_2.15.0_all.deb \
      && dpkg -i /tmp/opsgenie.deb \
      && rm -f /tmp/opsgenie.deb
 
@@ -85,8 +85,8 @@ RUN apt-get install python-pip python-six python-pyasn1 python-requests python-p
      && apt-get autoremove \
      && apt-get clean \
      && rm -rf /var/lib/apt/lists/* \
-     && wget -o /usr/lib/nagios/plugins/check_cloudwatch_metrics https://raw.githubusercontent.com/rizvir/check_cloudwatch_metrics/master/check_cloudwatch_metrics \
-     && chmod 755 check_cloudwatch_metrics
+     && wget -O /usr/lib/nagios/plugins/check_cloudwatch_metrics https://raw.githubusercontent.com/rizvir/check_cloudwatch_metrics/master/check_cloudwatch_metrics \
+     && chmod 755 /usr/lib/nagios/plugins/check_cloudwatch_metrics
 
 # Temporary hack to get icingaweb2 modules via git
 ARG GITREF_ICINGAWEB2=master
