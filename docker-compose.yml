@@ -1,7 +1,7 @@
 version: '2'
 services:
   icinga2:
-    image: jordan/icinga2
+    image: korekontrol/docker-icinga2:latest
     restart: on-failure:5
     hostname: icinga2
     env_file:
@@ -23,11 +23,13 @@ services:
       - ./data/icinga/certs:/etc/apache2/ssl
       - ./data/icinga/etc/icinga2:/etc/icinga2
       - ./data/icinga/etc/icingaweb2:/etc/icingaweb2
+      - ./data/icinga/etc/opsgenie/conf:/etc/opsgenie/conf
       - ./data/icinga/lib/icinga:/var/lib/icinga2
       - ./data/icinga/lib/php/sessions:/var/lib/php/sessions
       - ./data/icinga/log/apache2:/var/log/apache2
       - ./data/icinga/log/icinga2:/var/log/icinga2
       - ./data/icinga/log/icingaweb2:/var/log/icingaweb2
+      - ./data/icinga/log/opsgenie:/var/log/opsgenie
       - ./data/icinga/log/mysql:/var/log/mysql
       - ./data/icinga/spool:/var/spool/icinga2
       # If you want to enable outbound e-mail, create the files
@@ -42,7 +44,7 @@ services:
       - "443:443"
       - "5665:5665"
   graphite:
-    image: bebehei/graphite:latest
+    image: korekontrol/graphite:latest
     restart: on-failure:5
     hostname: graphite
     volumes:
@@ -52,6 +54,7 @@ services:
       - ./data/graphite/log/carbon:/var/log/carbon
   mysql:
     image: mariadb:10.1
+    command: --innodb-buffer-pool-size=256M --innodb-file-per-table --character_set_server=latin1 --innodb_flush_log_at_trx_commit=2
     env_file:
       - secrets_sql.env
     volumes:
