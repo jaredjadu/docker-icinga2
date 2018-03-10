@@ -2,35 +2,39 @@
 
 This repository contains the source for the [icinga2](https://www.icinga.org/icinga2/) [docker](https://www.docker.com) image.
 
-The dockerhub-repository is located at [https://hub.docker.com/r/korekontrol/icinga2/](https://hub.docker.com/r/korekontrol/icinga2/).
+The dockerhub-repository is located at [https://hub.docker.com/r/korekontrol/docker-icinga2/](https://hub.docker.com/r/korekontrol/docker-icinga2/).
 
 This build is automated by push for the git-repo. Just crawl it via:
 
-    docker pull korekontrol/icinga2
+    docker pull korekontrol/docker-icinga2
 
-## Image details
+## Docker image details
 
 1. Based on debian:stretch
 1. Key-Features:
    - icinga2
    - icingacli
    - icingaweb2
-   - icingaweb2-director module
-   - icingaweb2-graphite module
-   - icingaweb2-module-aws
+   - icingaweb2 modules:
+      - director
+      - graphite
+      - aws (github fork by [korekontrol](https://github.com/korekontrol))
+      - elasticsearch
+      - cube
+      - businessprocess
    - ssmtp
-   - MySQL
-   - Supervisor
-   - Apache2
+   - MySQL (can be disabled if remote mysql host is specified)
+   - Apache2 with PHP
    - SSL Support
-1. No SSH. Use docker [exec](https://docs.docker.com/engine/reference/commandline/exec/) or [nsenter](https://github.com/jpetazzo/nsenter)
+   - Supervisor
 1. If passwords are not supplied, they will be randomly generated and shown via stdout.
+1. An example `docker-compose.yml` is provided, which sets up containers with icinga2, graphite and mysql.
 
 ## Usage
 
 Start a new container and bind to host's port 80
 
-    docker run -p 80:80 -t korekontrol/icinga2:latest
+    docker run -p 80:80 -t korekontrol/docker-icinga2:latest
 
 ## Icinga Web 2
 
@@ -42,7 +46,7 @@ If you want to save your php-sessions over multiple boots, mount `/var/lib/php/s
 
 example:
 ```
-docker run [...] -v $PWD/icingaweb2-sessions:/var/lib/php/sessions/ jordan/icinga2
+docker run [...] -v $PWD/icingaweb2-sessions:/var/lib/php/sessions/ korekontrol/docker-icinga2
 ```
 
 ## Graphite
@@ -57,7 +61,7 @@ docker run -t \
   -e ICINGA2_FEATURE_GRAPHITE=true \
   -e ICINGA2_FEATURE_GRAPHITE_HOST=graphite \
   -e ICINGA2_FEATURE_GRAPHITE_PORT=2003 \
-  jordan/icinga2:latest
+  korekontrol/docker-icinga2:latest
 ```
 
 ## Icinga Director
