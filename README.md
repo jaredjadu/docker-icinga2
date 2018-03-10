@@ -12,9 +12,10 @@ This build is automated by push for the git-repo. Just crawl it via:
 
 1. Based on debian:stretch
 1. Key-Features:
+   - Supervisor (process management; we run multiple processes in this container)
    - icinga2
    - icingacli
-   - icingaweb2
+   - icingaweb2 (with Apache+PHP)
    - icingaweb2 modules:
       - director
       - graphite
@@ -22,11 +23,12 @@ This build is automated by push for the git-repo. Just crawl it via:
       - elasticsearch
       - cube
       - businessprocess
+   - AWS cli
+   - cloudwatch check
+   - slack integration plugin
+   - opsgenie integration plugin (with marid running)
    - ssmtp
-   - MySQL (can be disabled if remote mysql host is specified)
-   - Apache2 with PHP
-   - SSL Support
-   - Supervisor
+   - MySQL server (optional)
 1. If passwords are not supplied, they will be randomly generated and shown via stdout.
 1. An example `docker-compose.yml` is provided, which sets up containers with icinga2, graphite and mysql.
 

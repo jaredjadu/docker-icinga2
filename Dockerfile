@@ -29,6 +29,7 @@ RUN apt-get -qy update \
           dirmngr \
           dnsutils \
           gnupg \
+          openjdk-8-jre-headless \
           jq \
           lsb-release \
           mailutils \

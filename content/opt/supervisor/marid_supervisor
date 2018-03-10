@@ -1,0 +1,10 @@
+#!/bin/bash
+
+. /opt/helpers
+
+service marid start
+
+# Allow any signal which would kill a process to stop server
+trap "service marid stop" HUP INT QUIT ABRT ALRM TERM TSTP
+
+while pgrep -u opsgenie java > /dev/null; do sleep 5; done
