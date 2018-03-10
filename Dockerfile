@@ -23,11 +23,13 @@ RUN apt-get -qy update \
      && apt-get install -qy --no-install-recommends \
           apache2 \
           apt-transport-https \
+          bc \
           ca-certificates \
           curl \
           dirmngr \
           dnsutils \
           gnupg \
+          jq \
           lsb-release \
           mailutils \
           mariadb-client \
@@ -123,7 +125,7 @@ RUN mkdir -p /usr/local/share/icingaweb2/modules/ \
     | tar xz --strip-components=1 --directory=/usr/local/share/icingaweb2/modules/cube -f - icingaweb2-module-cube-${GITREF_MODCUBE}/ \
 # Icingaweb2 AWS
     && mkdir -p /usr/local/share/icingaweb2/modules/aws \
-    && wget -q --no-cookies -O - "https://github.com/Icinga/icingaweb2-module-aws/archive/${GITREF_MODAWS}.tar.gz" \
+    && wget -q --no-cookies -O - "https://github.com/korekontrol/icingaweb2-module-aws/archive/${GITREF_MODAWS}.tar.gz" \
     | tar xz --strip-components=1 --directory=/usr/local/share/icingaweb2/modules/aws -f - icingaweb2-module-aws-${GITREF_MODAWS}/ \
     && wget -q --no-cookies "https://github.com/aws/aws-sdk-php/releases/download/2.8.30/aws.zip" \
     && unzip -d /usr/local/share/icingaweb2/modules/aws/library/vendor/aws aws.zip \
