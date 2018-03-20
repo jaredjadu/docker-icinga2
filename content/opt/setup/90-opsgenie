@@ -8,7 +8,7 @@ echo '=> Preparing marid'
 API_PASSWORD=$(head -c 12 /dev/urandom | base64)
 sed -i "s/icinga.user=.*/icinga.user=marid/" /etc/opsgenie/conf/opsgenie-integration.conf
 sed -i "s/icinga.password=.*/icinga.password=${API_PASSWORD}/" /etc/opsgenie/conf/opsgenie-integration.conf
-
+sed -i "s#icinga.graphite_url=.*#icinga.graphite_url=http://graphite#" /etc/opsgenie/conf/opsgenie-integration.conf
 cat > /etc/icinga2/conf.d/marid-api-user.conf <<-END
 object ApiUser "marid" {
   password = "${API_PASSWORD}"
