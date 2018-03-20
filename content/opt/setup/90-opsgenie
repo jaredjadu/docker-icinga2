@@ -2,15 +2,19 @@
 
 . /opt/helpers
 
-echo 'Preparing marid'
+echo '=> Preparing marid'
 
 # adjust icinga api credentials
-if [ ! -z "${ICINGAWEB2_ADMIN_USER}" ]; then
-  sed -i "s/icinga.user=.*/icinga.user=${ICINGAWEB2_ADMIN_USER}/" /etc/opsgenie/conf/opsgenie-integration.conf
-fi
-if [ ! -z "${ICINGAWEB2_ADMIN_PASS}" ]; then
-  sed -i "s/icinga.password=.*/icinga.password=${ICINGAWEB2_ADMIN_PASS}/" /etc/opsgenie/conf/opsgenie-integration.conf
-fi
+API_PASSWORD=$(head -c 12 /dev/urandom | base64)
+sed -i "s/icinga.user=.*/icinga.user=marid/" /etc/opsgenie/conf/opsgenie-integration.conf
+sed -i "s/icinga.password=.*/icinga.password=${API_PASSWORD}/" /etc/opsgenie/conf/opsgenie-integration.conf
+
+cat > /etc/icinga2/conf.d/marid-api-user.conf <<-END
+object ApiUser "marid" {
+  password = "${API_PASSWORD}"
+  permissions = [ "*" ]
+}
+END
 
 # chown directories and files that might be coming from volumes
 mkdir -p /var/log/opsgenie/marid
