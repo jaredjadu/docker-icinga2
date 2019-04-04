@@ -2,6 +2,7 @@
 
 This repository contains the source for the [icinga2](https://www.icinga.org/icinga2/) [docker](https://www.docker.com) image.
 
+
 The dockerhub-repository is located at [https://hub.docker.com/r/korekontrol/docker-icinga2/](https://hub.docker.com/r/korekontrol/docker-icinga2/).
 
 This build is automated by push for the git-repo. Just crawl it via:
@@ -204,7 +205,7 @@ All these folders are configured and able to get mounted as volume. The bottom o
 | /var/cache/icinga2 | rw | cache-folder for icinga2 (not neccessary) |
 
 ## Credits
-Created by [Marek Obuchowicz](https://github.com/marek-obuchowicz) from [KoreKontrol](https://www.korekontrol.eu/).
+Created by [Marek Obuchowicz](https://github.com/marek-obuchowicz) from [KoreKontrol (managed hosting for Spryker)](https://www.korekontrol.eu/).
 
 Many thanks to the author of original repo, [Jordan Jethwa](https://github.com/jjethwa)
 
