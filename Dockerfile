@@ -46,41 +46,21 @@ RUN apt-get -qy update \
           supervisor \
           unzip \
           wget \
-     && apt-get clean \
-     && rm -rf /var/lib/apt/lists/*
-
-RUN curl -s https://packages.icinga.com/icinga.key \
-     | apt-key add - \
+     && curl -s https://packages.icinga.com/icinga.key | apt-key add - \
      && echo "deb http://packages.icinga.org/debian icinga-$(lsb_release -cs) main" > /etc/apt/sources.list.d/icinga2.list \
+     && apt-key adv --keyserver keyserver.ubuntu.com --recv-keys 10779AB4 \
+     && echo "deb https://raw.githubusercontent.com/nisabek/icinga2-slack-notifications/master/reprepro general main" > /etc/apt/sources.list.d/icinga2-slack.list \
      && apt-get update \
      && apt-get install -y --no-install-recommends \
           icinga2 \
           icinga2-ido-mysql \
+          icinga2-slack-notifications \
           icingacli \
           icingaweb2 \
           monitoring-plugins \
           nagios-nrpe-plugin \
           nagios-snmp-plugins \
           nagios-plugins-contrib \
-     && apt-get clean \
-     && rm -rf /var/lib/apt/lists/*
-
-# Install opsgenie notification handler
-RUN wget -O /tmp/opsgenie.deb https://s3-us-west-2.amazonaws.com/opsgeniedownloads/repo/opsgenie-icinga2_2.15.0_all.deb \
-     && dpkg -i /tmp/opsgenie.deb \
-     && rm -f /tmp/opsgenie.deb
-
-# Install slack notification handler
-RUN apt-key adv --keyserver keyserver.ubuntu.com --recv-keys 10779AB4 \
-     && echo "deb https://raw.githubusercontent.com/nisabek/icinga2-slack-notifications/master/reprepro general main" > /etc/apt/sources.list.d/icinga2-slack.list \
-     && apt-get -qy update \
-     && apt-get -qy install icinga2-slack-notifications \
-     && apt-get clean \
-     && rm -rf /var/lib/apt/lists/*
-
-
-# Install AWS SDK and additonal checks
-RUN apt-get -qy update \
      && apt-get -qy install python-pip python-six python-pyasn1 python-requests python-pbr python-redis python-pika python-awsauth \
      && pip install awscli \
      && pip install python-jenkins \
@@ -88,9 +68,15 @@ RUN apt-get -qy update \
      && apt-get -qy remove python-pip \
      && apt-get -qy autoremove \
      && apt-get clean \
-     && rm -rf /var/lib/apt/lists/* \
-     && wget -O /usr/lib/nagios/plugins/check_cloudwatch_metrics https://raw.githubusercontent.com/rizvir/check_cloudwatch_metrics/master/check_cloudwatch_metrics \
-     && chmod 755 /usr/lib/nagios/plugins/check_cloudwatch_metrics 
+     && rm -rf /var/lib/apt/lists/*
+
+RUN wget -O /usr/lib/nagios/plugins/check_cloudwatch_metrics https://raw.githubusercontent.com/rizvir/check_cloudwatch_metrics/master/check_cloudwatch_metrics \
+     && chmod 755 /usr/lib/nagios/plugins/check_cloudwatch_metrics
+
+RUN wget -O /tmp/opsgenie.deb https://s3-us-west-2.amazonaws.com/opsgeniedownloads/repo/opsgenie-icinga2_2.15.0_all.deb \
+     && dpkg -i /tmp/opsgenie.deb \
+     && rm -f /tmp/opsgenie.deb
+
 
 # Temporary hack to get icingaweb2 modules via git
 ARG GITREF_ICINGAWEB2=master
