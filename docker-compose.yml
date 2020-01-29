@@ -8,9 +8,6 @@ services:
       - secrets_sql.env
     environment:
       - ICINGA2_FEATURE_GRAPHITE=1
-      # Important:
-      # keep the hostname graphite the same as
-      # the name of the graphite docker-container
       - ICINGA2_FEATURE_GRAPHITE_HOST=graphite
       - ICINGA2_FEATURE_GRAPHITE_PORT=2003
       - ICINGA2_FEATURE_GRAPHITE_URL=http://graphite
@@ -23,7 +20,6 @@ services:
       - ./data/icinga/certs:/etc/apache2/ssl
       - ./data/icinga/etc/icinga2:/etc/icinga2
       - ./data/icinga/etc/icingaweb2:/etc/icingaweb2
-      - ./data/icinga/etc/opsgenie/conf:/etc/opsgenie/conf
       - ./data/icinga/lib/icinga:/var/lib/icinga2
       - ./data/icinga/lib/php/sessions:/var/lib/php/sessions
       - ./data/icinga/log/apache2:/var/log/apache2
@@ -43,15 +39,38 @@ services:
       - "80:80"
       - "443:443"
       - "5665:5665"
+    depends_on:
+      - mysql
+      - graphite
   graphite:
-    image: korekontrol/graphite:latest
+    image: graphiteapp/graphite-statsd:1.1.6-1
     restart: on-failure:5
     hostname: graphite
+    environment:
+      - REDIS_TAGDB=True
+      - GRAPHITE_WSGI_PROCESSES=2
+      - GRAPHITE_WSGI_THREADS=4
+      - MEMCACHE_HOST=memcached:11211
     volumes:
-      - ./data/graphite/lib:/var/lib/graphite
-      - ./data/graphite/log/apache:/var/log/apache2
-      - ./data/graphite/log/graphite:/var/log/graphite
-      - ./data/graphite/log/carbon:/var/log/carbon
+      - ./data/graphite/storage:/opt/graphite/storage
+      - ./data/graphite/conf:/opt/graphite/conf
+      - ./data/graphite/redis:/var/lib/redis
+    ports:
+      - "8080:8080"
+    depends_on:
+      - memcached
+  grafana:
+    image: grafana/grafana:6.0.1
+    environment:
+      - GF_BASIC_AUTH_ENABLED=false
+      - GF_AUTH_ANONYMOUS_ENABLED=1
+      - GF_AUTH_ANONYMOUS_ORG_ROLE=Admin
+    volumes:
+      - ./data/grafana/data:/var/lib/grafana
+    ports:
+      - "8081:3000"
+    depends_on:
+      - graphite
   mysql:
     image: mariadb:10.1
     command: --innodb-buffer-pool-size=256M --innodb-file-per-table --character_set_server=latin1 --innodb_flush_log_at_trx_commit=2
@@ -59,5 +78,7 @@ services:
       - secrets_sql.env
     volumes:
       - ./data/mysql/data:/var/lib/mysql
-      # If you have previously used the container's internal DB use:
-      #- ./data/icinga/lib/mysql:/var/lib/mysql
+  memcached:
+    image: memcached:1-alpine
+    restart: on-failure:5
+    command: 'memcached -m 128'
