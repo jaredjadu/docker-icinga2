@@ -2,6 +2,10 @@
 
 . /opt/helpers
 
+# Wait for other services to start
+echo "[icinga2] sleeping..."
+sleep 3s
+
 service icinga2 start
 
 # Kickstart is only possible after icinga2 start -> not in setup script

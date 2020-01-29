@@ -1,0 +1,9 @@
+#!/bin/sh
+
+# Wait for icinga api to start
+echo "[director_daemon] sleeping..."
+sleep 20s
+
+# Start director daemon
+echo "[director_daemon] starting icinga director daemon..."
+/usr/bin/icingacli director daemon run
