@@ -28,7 +28,6 @@ This build is automated by push for the git-repo. Just crawl it via:
    - cloudwatch check
    - slack integration plugin
    - opsgenie integration plugin (with marid running)
-   - ssmtp
    - MySQL server (optional)
 1. If passwords are not supplied, they will be randomly generated and shown via stdout.
 1. An example `docker-compose.yml` is provided, which sets up containers with icinga2, graphite and mysql.
@@ -73,7 +72,9 @@ The [Icinga Director](https://github.com/Icinga/icingaweb2-module-director) Icin
 
 ## Sending Notification Mails
 
-The container has `ssmtp` installed, which forwards mails to a preconfigured static server.
+The container does not have `ssmtp` installed, which forwards mails to a preconfigured static server. Documentation below is outdated, as `ssmtp` is not available in Debian
+Buster anymore. One can switch to `msmtp`, but it's not implemented here.
+
 
 You have to create the files `ssmtp.conf` for general configuration and `revaliases` (mapping from local Unix-user to mail-address).
 
