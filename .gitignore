@@ -1,4 +1,3 @@
 /docker-compose.override.yml
 /data
 /*.env
-secrets_sql.env
