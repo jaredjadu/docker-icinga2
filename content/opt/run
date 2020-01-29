@@ -33,7 +33,7 @@ export ICINGAWEB2_DIRECTOR_MYSQL_USER=${ICINGAWEB2_DIRECTOR_MYSQL_USER:-${DEFAUL
 export ICINGAWEB2_DIRECTOR_MYSQL_PASS=${ICINGAWEB2_DIRECTOR_MYSQL_PASS:-${DIRECTOR_PASSWORD:-${DEFAULT_MYSQL_PASS}}}
 export ICINGAWEB2_DIRECTOR_MYSQL_DATA=${ICINGAWEB2_DIRECTOR_MYSQL_DATA:-icingaweb2_director}
 
-run-parts --lsbsysinit --exit-on-error -- /opt/setup
+run-parts --lsbsysinit --exit-on-error -- /opt/setup || true
 
 cat <<-END
 
@@ -49,10 +49,16 @@ fi
 Icinga Web 2 (/icingaweb2) default credentials: ${ICINGAWEB2_ADMIN_USER}:${ISSET_ICINGAWEB2_ADMIN_PASS:-$ICINGAWEB2_ADMIN_PASS}
 ===================================================================
 
-Starting Supervisor.
+Checking configuration.
 END
 
 icinga2 daemon --validate
+
+cat <<-END
+===================================================================
+
+Starting Supervisor.
+END
 
 /usr/bin/supervisord -c /etc/supervisor/supervisord.conf -n &
 trap "supervisorctl shutdown && wait" SIGTERM
