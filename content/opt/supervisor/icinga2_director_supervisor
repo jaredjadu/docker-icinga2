@@ -6,4 +6,4 @@ sleep 20s
 
 # Start director daemon
 echo "[director_daemon] starting icinga director daemon..."
-/usr/bin/icingacli director daemon run
+exec /usr/bin/icingacli director daemon run

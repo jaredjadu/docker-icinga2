@@ -1,9 +1,7 @@
 # Dockerfile for icinga2 with icingaweb2
 # https://github.com/korekontrol/docker-icinga2
 
-FROM debian:stretch
-
-MAINTAINER Marek Obuchowicz
+FROM debian:buster
 
 ENV APACHE2_HTTP=REDIRECT \
     ICINGA2_FEATURE_GRAPHITE=false \
@@ -17,9 +15,8 @@ ENV APACHE2_HTTP=REDIRECT \
     DEBIAN_FRONTEND="noninteractive"
 
 
-
-RUN apt-get -qy update \
-     && apt-get upgrade -qy \
+RUN  echo "deb http://deb.debian.org/debian stretch-backports main" /etc/apt/sources.list.d/stretch-backports.list \
+     && apt-get -qy update \
      && apt-get install -qy --no-install-recommends \
           apache2 \
           apt-transport-https \
@@ -29,19 +26,20 @@ RUN apt-get -qy update \
           dirmngr \
           dnsutils \
           gnupg \
-          openjdk-8-jre-headless \
+#          openjdk-8-jre-headless \
+          openjdk-11-jre-headless \
           jq \
           lsb-release \
           mailutils \
           mariadb-client \
-          mariadb-server \
           php-curl \
           php-ldap \
           php-mysql \
+          php7.3-opcache \
           procps \
           pwgen \
           snmp \
-          ssmtp \
+#          ssmtp \
           sudo \
           supervisor \
           unzip \
@@ -53,6 +51,7 @@ RUN apt-get -qy update \
      && apt-get update \
      && apt-get install -y --no-install-recommends \
           icinga2 \
+          icinga2-bin \
           icinga2-ido-mysql \
           icinga2-slack-notifications \
           icingacli \
@@ -79,6 +78,9 @@ RUN wget -O /tmp/opsgenie.deb https://s3-us-west-2.amazonaws.com/opsgeniedownloa
 
 
 # Temporary hack to get icingaweb2 modules via git
+ARG GITREF_IPL=stable/0.4.0
+ARG GITREF_INCUBATOR=stable/0.5.0
+ARG GITREF_REACTBUNDLE=stable/0.7.0
 ARG GITREF_ICINGAWEB2=master
 ARG GITREF_DIRECTOR=master
 ARG GITREF_MODGRAPHITE=master
@@ -87,9 +89,23 @@ ARG GITREF_MODELASTICSEARCH=master
 ARG GITREF_MODBUSINESSPROCESS=master
 ARG GITREF_MODCUBE=master
 
+
+
 RUN mkdir -p /usr/local/share/icingaweb2/modules/ \
     && wget -q --no-cookies -O - "https://github.com/Icinga/icingaweb2/archive/${GITREF_ICINGAWEB2}.tar.gz" \
     | tar xz --strip-components=2 --directory=/usr/local/share/icingaweb2/modules -f - icingaweb2-${GITREF_ICINGAWEB2}/modules/monitoring icingaweb2-${GITREF_ICINGAWEB2}/modules/doc \
+# Icinga ipl
+    && mkdir -p /usr/local/share/icingaweb2/modules/ipl/ \
+    && wget -q --no-cookies -O - "https://github.com/Icinga/icingaweb2-module-ipl/archive/${GITREF_IPL}.tar.gz" \
+    | tar xz --strip-components=1 --directory=/usr/local/share/icingaweb2/modules/ipl --exclude=.gitignore -f - \
+# Icinga incubator
+    && mkdir -p /usr/local/share/icingaweb2/modules/incubator/ \
+    && wget -q --no-cookies -O - "https://github.com/Icinga/icingaweb2-module-incubator/archive/${GITREF_INCUBATOR}.tar.gz" \
+    | tar xz --strip-components=1 --directory=/usr/local/share/icingaweb2/modules/incubator --exclude=.gitignore -f - \
+# Icinga reactbundle
+    && mkdir -p /usr/local/share/icingaweb2/modules/reactbundle/ \
+    && wget -q --no-cookies -O - "https://github.com/Icinga/icingaweb2-module-reactbundle/archive/${GITREF_REACTBUNDLE}.tar.gz" \
+    | tar xz --strip-components=1 --directory=/usr/local/share/icingaweb2/modules/reactbundle --exclude=.gitignore -f - \
 # Icinga Director
     && mkdir -p /usr/local/share/icingaweb2/modules/director/ \
     && wget -q --no-cookies -O - "https://github.com/Icinga/icingaweb2-module-director/archive/${GITREF_DIRECTOR}.tar.gz" \
@@ -116,10 +132,10 @@ RUN mkdir -p /usr/local/share/icingaweb2/modules/ \
     | tar xz --strip-components=1 --directory=/usr/local/share/icingaweb2/modules/aws -f - icingaweb2-module-aws-${GITREF_MODAWS}/ \
     && wget -q --no-cookies "https://github.com/aws/aws-sdk-php/releases/download/2.8.30/aws.zip" \
     && unzip -d /usr/local/share/icingaweb2/modules/aws/library/vendor/aws aws.zip \
-    && rm aws.zip \
-    && true
+    && rm aws.zip
 
-ADD content/ /
+
+COPY content/ /
 
 # Final fixes
 RUN true \
@@ -135,7 +151,7 @@ RUN true \
     && chmod u+s,g+s \
         /bin/ping \
         /bin/ping6 \
-        /usr/lib/nagios/plugins/check_icmp
+        /usr/lib/nagios/plugins/check_icmp 
 
 EXPOSE 80 443 5665
 
