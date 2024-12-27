@@ -4,6 +4,8 @@
 echo "[director_daemon] sleeping..."
 sleep 20s
 
-# Start director daemon
-echo "[director_daemon] starting icinga director daemon..."
-exec /usr/bin/icingacli director daemon run
+# Start director daemon if enabled
+if    evaluate_boolean "${ICINGA2_FEATURE_DIRECTOR}"; then
+	echo "[director_daemon] starting icinga director daemon..."
+    exec /usr/bin/icingacli director daemon run
+fi
