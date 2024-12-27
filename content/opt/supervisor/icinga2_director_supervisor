@@ -1,4 +1,6 @@
-#!/bin/sh
+#!/bin/bash
+
+. /opt/helpers
 
 # Wait for icinga api to start
 echo "[director_daemon] sleeping..."
@@ -9,3 +11,5 @@ if    evaluate_boolean "${ICINGA2_FEATURE_DIRECTOR}"; then
 	echo "[director_daemon] starting icinga director daemon..."
     exec /usr/bin/icingacli director daemon run
 fi
+
+while true; do sleep 5; done
